@@ -12,8 +12,17 @@ Fun-CosyVoice3-0.5B-2512 モデルを使用した日本語対応の音声合成 
 ## 必要環境
 
 - Python 3.10
-- NVIDIA GPU（CUDA対応）
+- NVIDIA GPU（CUDA 12.1以上対応）
 - 8GB以上のVRAM推奨
+
+### 最新GPU（RTX 50シリーズ等）をお使いの場合
+
+RTX 5070 Ti などの最新GPU（Blackwell/sm_120アーキテクチャ）では、PyTorch nightlyが必要です：
+
+```bash
+# PyTorch nightly (CUDA 12.8) のインストール
+pip install --pre torch torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
+```
 
 ## インストール
 
@@ -80,6 +89,36 @@ python webui_jp.py
 - `[fil]` - フィラー音（えー、あー）
 
 例: `こんにちは。[breath]今日はいい天気ですね。`
+
+## トラブルシューティング
+
+### CUDA kernel エラー（RTX 50シリーズ等）
+
+```
+CUDA error: no kernel image is available for execution on the device
+```
+
+このエラーが出た場合、PyTorch nightly (CUDA 12.8) をインストールしてください：
+
+```bash
+pip install --pre torch torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
+```
+
+### torchcodec エラー（Windows）
+
+```
+ImportError: TorchCodec is required for load_with_torchcodec
+```
+
+このエラーは修正済みです。最新版では `soundfile` バックエンドを使用するため発生しません。
+
+### wetext/kaldifst エラー（Windows）
+
+```
+ModuleNotFoundError: No module named 'kaldifst'
+```
+
+このエラーは修正済みです。Windows環境では `BasicNormalizer` フォールバックが自動的に使用されます。
 
 ## オリジナルリポジトリ
 
