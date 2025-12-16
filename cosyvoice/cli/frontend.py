@@ -27,11 +27,29 @@ import inflect
 try:
     import ttsfrd
     use_ttsfrd = True
+    use_wetext = False
 except ImportError:
-    print("failed to import ttsfrd, use wetext instead")
-    from wetext import Normalizer as ZhNormalizer
-    from wetext import Normalizer as EnNormalizer
+    print("failed to import ttsfrd, trying wetext...")
     use_ttsfrd = False
+    try:
+        from wetext import Normalizer as ZhNormalizer
+        from wetext import Normalizer as EnNormalizer
+        use_wetext = True
+    except ImportError:
+        print("failed to import wetext, using basic normalization")
+        use_wetext = False
+
+        # Basic normalizer fallback for Windows
+        class BasicNormalizer:
+            def __init__(self, *args, **kwargs):
+                pass
+
+            def normalize(self, text):
+                # Basic text cleaning
+                return text
+
+        ZhNormalizer = BasicNormalizer
+        EnNormalizer = BasicNormalizer
 from cosyvoice.utils.file_utils import logging, load_wav
 from cosyvoice.utils.frontend_utils import contains_chinese, replace_blank, replace_corner_mark, remove_bracket, spell_out_number, split_paragraph, is_only_punctuation
 
